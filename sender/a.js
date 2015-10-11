@@ -1,4 +1,4 @@
-PULSE = 125;
+PULSE = 400;
 
 window.AudioContext = window.AudioContext ||
   window.webkitAudioContext;
@@ -19,8 +19,8 @@ function process(audioProcessingEvent) {
 
     state.t++;
     var samp = 0;
-    if (state.lo) samp += 0.025 * Math.sin(2 * 3.1415926535 * 4000 / 44100 * state.t);
-    if (state.hi) samp += 0.025 * Math.sin(2 * 3.1415926535 * 6000 / 44100 * state.t);
+    if (state.lo) samp += 0.25 * Math.sin(2 * 3.1415926535 * 4000 / 44100 * state.t);
+    if (state.hi) samp += 0.25 * Math.sin(2 * 3.1415926535 * 7000 / 44100 * state.t);
     outputData[sample] = samp;
     if (state.t % PULSE == 0) {
       state.t = 0;
@@ -52,3 +52,15 @@ state = {
   bits: [],
   text: "",
 }
+
+$(function() {
+  $("#send").on('click', function() {
+    var text = $("#text").val();
+    state.text += text + "\n";
+    $("#text").val("");
+  });
+    $("#sendhi").on('click', function() {
+    state.text += "hi" + "\n";
+  });
+
+});

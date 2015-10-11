@@ -10,7 +10,7 @@ function error_k() {
 
 gain = 1;
 BUFSIZE = 4096;
-THRESH = 3;
+THRESH = 2;
 WINDOW = 64;
 
 function success_k(stream) {
@@ -25,7 +25,7 @@ function success_k(stream) {
       d.fillStyle="black";
       d.fillRect(40 * i, h, 40, globalFrame[i] * -3);
       d.fillStyle = "blue";
-      d.fillText(Math.floor(10 * globalFrame[i]), 40 * i, 20);
+      d.fillText(Math.floor(10 * globalFrame[i]) / 10, 40 * i, 20);
     }
 
   }, 100);
@@ -52,17 +52,24 @@ function success_k(stream) {
 
 }
 
-var freqs = [4000,6000];
+var freqs = [4000,7000];
 tally = [];
 
 thisbuf = [];
 
 var bit_buf = "";
+
 var string_buf = "";
+debug = "";
+
 function recordBit(bit) {
+  debug += bit;
+
   bit_buf += bit;
   if (bit_buf.length == 8) {
+    debug += " ";
     var chr = String.fromCharCode(parseInt(bit_buf, 2));
+    console.log("char", chr);
     if (chr == "\n") {
       console.log(string_buf);
       string_buf = "";
@@ -72,6 +79,9 @@ function recordBit(bit) {
     }
     bit_buf = "";
   }
+
+  $("#debug").text(debug);
+
 }
 
 curState = {lo: false, hi: false};
@@ -80,7 +90,8 @@ function stateMachine(frame) {
   globalFrame = frame;
 //  console.log(frame);
   var compare = {lo: frame[0] > THRESH, hi: frame[1] > THRESH};
-  if (curState.lo != compare.lo && curState.hi != compare.hi) console.log("X");
+  if (curState.lo != compare.lo && curState.hi != compare.hi) { // console.log("X");
+  }
   else if (curState.lo != compare.lo) recordBit(0);
   else if (curState.hi != compare.hi) recordBit(1);
   curState = compare;
